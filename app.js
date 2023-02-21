@@ -170,7 +170,6 @@ const checkRequestsBody = (request, response, next) => {
   request.todo = todo;
   request.id = id;
 
-
   request.todoId = todoId;
 
   next();
@@ -266,8 +265,8 @@ app.post("/todos/", checkRequestsBody, async (request, response) => {
             )
         ;`;
 
-  const createUser= await db.run(addTodoQuery);
-  console.log(createUser)
+  const createUser = await db.run(addTodoQuery);
+  console.log(createUser);
   response.send("Todo Successfully Added");
 });
 

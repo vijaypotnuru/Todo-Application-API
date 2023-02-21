@@ -92,10 +92,9 @@ const checkRequestsQueries = async (request, response, next) => {
         return;
       }
     } catch (e) {
-        response.status(400);
-        response.send("Invalid Due Date");
-        return;
-
+      response.status(400);
+      response.send("Invalid Due Date");
+      return;
     }
   }
 
@@ -147,37 +146,26 @@ const checkRequestsBody = (request, response, next) => {
   }
 
   if (dueDate !== undefined) {
-
     try {
-        const myDate = new Date(dueDate);
-         const formatedDate = format(new Date(dueDate), "yyyy-MM-dd");
-          console.log(formatedDate);
-          const result = toDate(new Date(formatedDate));
-           const isValidDate = isValid(result);
-           console.log(isValidDate);
-           console.log(isValidDate);
-            if (isValidDate === true) {
-            request.dueDate = formatedDate;
-            } else {
-            response.status(400);
-            response.send("Invalid Due Date");
-            return;
-            }
-        
-    } catch (e) {
+      const myDate = new Date(dueDate);
+      const formatedDate = format(new Date(dueDate), "yyyy-MM-dd");
+      console.log(formatedDate);
+      const result = toDate(new Date(formatedDate));
+      const isValidDate = isValid(result);
+      console.log(isValidDate);
+      console.log(isValidDate);
+      if (isValidDate === true) {
+        request.dueDate = formatedDate;
+      } else {
         response.status(400);
-            response.send("Invalid Due Date");
-            return;
+        response.send("Invalid Due Date");
+        return;
+      }
+    } catch (e) {
+      response.status(400);
+      response.send("Invalid Due Date");
+      return;
     }
-
-
-
-   
-   
-    
-
-   
-    
   }
   request.todo = todo;
   request.id = id;
@@ -191,7 +179,7 @@ const checkRequestsBody = (request, response, next) => {
 //Get Todos API-1
 app.get("/todos/", checkRequestsQueries, async (request, response) => {
   const { status = "", search_q = "", priority = "", category = "" } = request;
-
+  console.log(status, search_q, priority, category);
   const getTodosQuery = `
         SELECT 
             id,
@@ -202,7 +190,8 @@ app.get("/todos/", checkRequestsQueries, async (request, response) => {
             due_date AS dueData  
         FROM 
             todo
-        WHERE todo LIKE '%${search_q}%' AND priority LIKE '%${priority}%' 
+        WHERE 
+        todo LIKE '%${search_q}%' AND priority LIKE '%${priority}%' 
         AND status LIKE '%${status}%' AND category LIKE '%${category}%';`;
 
   const todosArray = await db.all(getTodosQuery);
@@ -210,7 +199,7 @@ app.get("/todos/", checkRequestsQueries, async (request, response) => {
 });
 
 //GET Todo API-2
-app.get("/todos/:todoId", checkRequestsQueries,async (request, response) => {
+app.get("/todos/:todoId", checkRequestsQueries, async (request, response) => {
   const { todoId } = request;
 
   const getTodosQuery = `
@@ -249,8 +238,8 @@ app.get("/agenda/", checkRequestsQueries, async (request, response) => {
             due_date = '${date}'
         ;`;
 
-  const todosArray = await db.get(selectDuaDateQuery);
-  console.log(todosArray, "JACK");
+  const todosArray = await db.all(selectDuaDateQuery);
+
   if (todosArray === undefined) {
     response.status(400);
     response.send("Invalid Due Date");
@@ -261,7 +250,7 @@ app.get("/agenda/", checkRequestsQueries, async (request, response) => {
 
 //Add Todo API-4
 app.post("/todos/", checkRequestsBody, async (request, response) => {
-  const { id, todo, category,priority, status, dueDate } = request;
+  const { id, todo, category, priority, status, dueDate } = request;
 
   const addTodoQuery = `
         INSERT INTO 
@@ -286,11 +275,10 @@ app.put("/todos/:todoId/", checkRequestsBody, async (request, response) => {
   const { todoId } = request;
 
   const { priority, todo, status, category, dueDate } = request;
-    
+
   let updateTodoQuery = null;
 
-
-  console.log(priority, todo,status, dueDate,category,);
+  console.log(priority, todo, status, dueDate, category);
   switch (true) {
     case status !== undefined:
       updateTodoQuery = `

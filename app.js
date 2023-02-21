@@ -169,7 +169,7 @@ const checkRequestsBody = (request, response, next) => {
   }
   request.todo = todo;
   request.id = id;
-  request.dueDate = dueDate;
+
 
   request.todoId = todoId;
 
@@ -187,7 +187,7 @@ app.get("/todos/", checkRequestsQueries, async (request, response) => {
             priority,
             status,
             category,
-            due_date AS dueData  
+            due_date AS dueDate 
         FROM 
             todo
         WHERE 
@@ -209,7 +209,7 @@ app.get("/todos/:todoId", checkRequestsQueries, async (request, response) => {
             priority,
             status,
             category,
-            due_date AS dueData
+            due_date AS dueDate
         FROM 
             todo            
         WHERE 
@@ -231,7 +231,7 @@ app.get("/agenda/", checkRequestsQueries, async (request, response) => {
             priority,
             status,
             category,
-            due_date AS dueData  
+            due_date AS dueDate
         FROM 
             todo
         WHERE 
@@ -266,7 +266,8 @@ app.post("/todos/", checkRequestsBody, async (request, response) => {
             )
         ;`;
 
-  await db.run(addTodoQuery);
+  const createUser= await db.run(addTodoQuery);
+  console.log(createUser)
   response.send("Todo Successfully Added");
 });
 
